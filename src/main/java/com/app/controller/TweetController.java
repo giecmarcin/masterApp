@@ -7,9 +7,12 @@ import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -23,6 +26,10 @@ public class TweetController {
     private Twitter twitter;
 
     @RequestMapping("/")
+    public String home(){
+        return "searchPage";
+    }
+    @RequestMapping("/result")
     public String hello(@RequestParam(defaultValue = "Spring MVC4") String search, Model model){
         SearchResults searchResults = twitter.searchOperations().search(search);
         List<Tweet> tweets = searchResults.getTweets();
@@ -30,4 +37,24 @@ public class TweetController {
         model.addAttribute("search", search);
         return "resultPage";
     }
+
+    @RequestMapping(value = "/postSearch", method = RequestMethod.POST)
+    public String postSearch(HttpServletRequest request,
+                             RedirectAttributes redirectAttributes) {
+        String search = request.getParameter("search");
+        if (search.toLowerCase().contains("śmieci")) {
+            redirectAttributes.addFlashAttribute("error", "Spróbuj wpisać Spring!");
+            return "redirect:/";
+        }
+        redirectAttributes.addAttribute("search", search);
+        return "redirect:result"; //Metoda nie zwraca nazwy widoku, tylko polecenie przekierowania do innego adresu URL.
+    }
+
+//    Operacje redirect i forward (przekierowanie i przekazanie) są często stosowane w aplikacjach Java.
+//    Obie służą do zmiany widoku prezentowanego w przeglądarce użytkownika. Różnica pomiędzy nimi
+//    polega na tym, że redirect przesyła w nagłówku strony kod 302, który powoduje zmianę widoku
+//    w samej przeglądarce, natomiast forward nie zmienia adresu URL. W platformie Spring MVC można
+//    stosować obie operacje, umieszczając po prostu prefiks redirect: lub forward: w ciągu zwracanym
+//    przez metodę. W obu przypadkach ciąg nie jest interpretowany jako nazwa widoku, jak w poprzednim
+//    przykładzie, tylko powoduje przejście do określonego adresu URL.
 }
