@@ -3,6 +3,7 @@ package com.app.dto;
 /**
  * Created by Marcin on 31.07.2016.
  */
+import com.app.services.PastLocalDate;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -22,6 +23,7 @@ public class ProfileForm {
     private String email;
 
     @NotNull
+    @PastLocalDate
     private LocalDate birthDate;
 
     @NotEmpty
