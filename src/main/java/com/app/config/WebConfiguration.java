@@ -2,8 +2,10 @@ package com.app.config;
 
 import com.app.services.UsLocalDateFormatter;
 import org.springframework.boot.autoconfigure.web.WebMvcProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -37,6 +39,13 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
                 LocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("lang");
         return localeChangeInterceptor;
+    }
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:/locale/messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 
     @Override
